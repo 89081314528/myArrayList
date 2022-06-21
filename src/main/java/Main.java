@@ -11,7 +11,7 @@ public class Main {
         list.add("4");
         list.add("5");
         System.out.println(list);
-        System.out.println("size = " + list.getSize());
+        System.out.println("size = " + list.size());
         System.out.println("capacity = " + list.getCapacity());
 //        list.add("6");
 //        list.add(0, "q");
@@ -33,7 +33,7 @@ public class Main {
 //        list.clear();
 //        System.out.println(Arrays.toString(list.toArray()));
         System.out.println(list);
-        System.out.println("size = " + list.getSize());
+        System.out.println("size = " + list.size());
         System.out.println("capacity = " + list.getCapacity());
 //        System.out.println(max(list));
     }
