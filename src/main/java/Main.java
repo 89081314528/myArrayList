@@ -4,48 +4,66 @@ import static java.lang.Integer.parseInt;
 
 public class Main {
     public static void main(String[] args) {
-        StringListImpl list = new StringListImpl(5);
-        list.add("1");
-        list.add("2");
-        list.add("3");
-        list.add("4");
-        list.add("5");
-        System.out.println(list);
-        System.out.println("size = " + list.size());
-        System.out.println("capacity = " + list.getCapacity());
-//        list.add("6");
-//        list.add(0, "q");
-//        list.set(5,"q");
-//        list.remove("5");
-//        list.remove(5);
-//        System.out.println(list.contains("3"));
-//        System.out.println(list.indexOf("3"));
-//        System.out.println(list.lastIndexOf("u"));
-//        System.out.println(list.get(5));
-        StringListImpl otherList = new StringListImpl(5);
-        otherList.add("1");
-        otherList.add("2");
-        otherList.add("3");
-        otherList.add("4");
-        System.out.println(list.equals(otherList));
-//        System.out.println(list.size());
-//        System.out.println(list.isEmpty());
-//        list.clear();
-//        System.out.println(Arrays.toString(list.toArray()));
-        System.out.println(list);
-        System.out.println("size = " + list.size());
-        System.out.println("capacity = " + list.getCapacity());
-//        System.out.println(max(list));
+        IntListImpl list = new IntListImpl(10000);
+        for (int i = 0; i < list.getCapacity(); i++) {
+            list.add((int) (Math.random() * 100));
+        }
+        int[] list1 = list.toArray();
+        int[] list2 = list.toArray();
+        int[] list3 = list.toArray();
+
+
+        long start1 = System.currentTimeMillis();
+        sortBubble(list1);
+        System.out.println("Время пузырьковой сортировки " + (System.currentTimeMillis() - start1));
+
+        long start2 = System.currentTimeMillis();
+        sortSelection(list2);
+        System.out.println("Время сортировки выбором " + (System.currentTimeMillis() - start2));
+
+        long start3 = System.currentTimeMillis();
+        sortInsertion(list3);
+        System.out.println("Время сортировки вставками " + (System.currentTimeMillis() - start3));
+
     }
 
-    public static int max(StringList list) {
-        int max = parseInt(list.get(0));
-        for (int i = 1; i < list.size(); i++) {
-            int a = parseInt(list.get(i));
-            if(max < a) {
-                max = a;
+    public static void sortBubble(int[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            for (int j = 0; j < arr.length - 1 - i; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    swapElements(arr, j, j + 1);
+                }
             }
         }
-        return max;
+    }
+
+    public static void sortSelection(int[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            int minElementIndex = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[minElementIndex]) {
+                    minElementIndex = j;
+                }
+            }
+            swapElements(arr, i, minElementIndex);
+        }
+    }
+
+    public static void sortInsertion(int[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            int temp = arr[i];
+            int j = i;
+            while (j > 0 && arr[j - 1] >= temp) {
+                arr[j] = arr[j - 1];
+                j--;
+            }
+            arr[j] = temp;
+        }
+    }
+
+    private static void swapElements(int[] arr, int indexA, int indexB) {
+        int tmp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = tmp;
     }
 }

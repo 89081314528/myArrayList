@@ -5,14 +5,14 @@ import ru.julia.exception.SizeException;
 
 import java.util.Arrays;
 
-public class StringListImpl implements StringList {
+public class IntListImpl implements IntList {
 
     private int capacity;
-    private String[] array;
+    private int[] array;
     private int size;
 
     @Override
-    public String[] getArray() {
+    public int[] getArray() {
         return array;
     }
 
@@ -25,22 +25,21 @@ public class StringListImpl implements StringList {
         return "array=" + Arrays.toString(array);
     }
 
-    public StringListImpl(int capacity) {
+    public IntListImpl(int capacity) {
         this.capacity = capacity;
-        array = new String[capacity];
+        array = new int[capacity];
         this.size = 0;
     }
 
     @Override
     //добавляет элемент в конец листа
     //при превышении емкости массив расширяется
-    //
-    public String add(String item) {
+    public int add(int item) {
         if (size < capacity) {
             array[size] = item;
         } else {
             capacity = capacity * 2;
-            String[] newArray = new String[capacity];
+            int[] newArray = new int[capacity];
             for (int i = 0; i < size; i++) {
                 newArray[i] = array[i];
             }
@@ -53,14 +52,13 @@ public class StringListImpl implements StringList {
 
     @Override
     //добавляет элемент на определенную позицию, сдвигая оставшиеся элементы вправо
-    //
-    public String add(int index, String item) {
+    public int add(int index, int item) {
         if (index > size) {
             throw new SizeException();
         }
         if ((size + 1) > capacity) {
             capacity = capacity * 2;
-            String[] newArray = new String[capacity];
+            int[] newArray = new int[capacity];
             for (int i = 0; i < size; i++) {
                 newArray[i] = array[i];
             }
@@ -70,9 +68,9 @@ public class StringListImpl implements StringList {
             array[index] = item;
         }
         if (index < size) {
-            String current = array[index];
-            String next = array[index + 1];
-            String actual = item;
+            int current = array[index];
+            int next = array[index + 1];
+            int actual = item;
             array[index] = actual;
             for (int i = index + 1; i <= size; i++) {
                 actual = current;
@@ -87,7 +85,7 @@ public class StringListImpl implements StringList {
 
     @Override
     //добавляет элемент на определенную позицию, затирая существующий
-    public String set(int index, String item) {
+    public int set(int index, int item) {
         if (index > capacity - 1) {
             throw new CapacityException();
         }
@@ -101,12 +99,11 @@ public class StringListImpl implements StringList {
     @Override
     // Удаление элемента.
     // Вернуть удаленный элемент или исключение, если подобный элемент отсутствует в списке.
-    //
-    public String remove(String item) {
+    public int remove(int item) {
         boolean itemIsAbsent = true;
         int index = 0;
         for (int i = 0; i < size; i++) {
-            if (array[i].equals(item)) {
+            if (array[i] == item) {
                 index = i;
                 itemIsAbsent = false;
                 break;
@@ -120,7 +117,7 @@ public class StringListImpl implements StringList {
                 array[j] = array[j + 1];
             }
         }
-        array[size - 1] = null;
+        array[size - 1] = 0;
         size = size - 1;
         return item;
     }
@@ -128,37 +125,31 @@ public class StringListImpl implements StringList {
     @Override
     // Удаление элемента по индексу.
     // Вернуть удаленный элемент или исключение, если подобный элемент отсутствует в списке.
-    public String remove(int index) {
+    public int removeByIndex(int index) {
         if (index >= size) {
             throw new ElementIsAbsentException();
         }
         for (int i = index; i < size - 1; i++) {
             array[i] = array[i + 1];
         }
-        array[size - 1] = null;
+        array[size - 1] = 0;
         size = size - 1;
         return array[index];
     }
 
     @Override
     // Проверка на существование элемента. Вернуть true/false;
-    //
-    public boolean contains(String item) {
-        for (int i = 0; i < size; i++) {
-            if (array[i].equals(item)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    public boolean contains(int item) {
+        sortInsertion();
+        return binarySearch(item);
+   }
 
     @Override
     // Поиск элемента.
     // Вернуть индекс элемента или -1 в случае отсутствия.
-    //
-    public int indexOf(String item) {
+    public int indexOf(int item) {
         for (int i = 0; i < size; i++) {
-            if (array[i].equals(item)) {
+            if (array[i] == item) {
                 return i;
             }
         }
@@ -168,10 +159,9 @@ public class StringListImpl implements StringList {
     @Override
     // Поиск элемента с конца.
     // Вернуть индекс элемента или -1 в случае отсутствия.
-    //
-    public int lastIndexOf(String item) {
+    public int lastIndexOf(int item) {
         for (int i = size - 1; i >= 0; i--) {
-            if (array[i].equals(item)) {
+            if (array[i] == item) {
                 return i;
             }
         }
@@ -181,7 +171,7 @@ public class StringListImpl implements StringList {
     @Override
     // Получить элемент по индексу.
     // Вернуть элемент или исключение, если выходит за рамки фактического количества элементов.
-    public String get(int index) {
+    public int get(int index) {
         if (index >= size) {
             throw new ElementIsAbsentException();
         }
@@ -191,15 +181,14 @@ public class StringListImpl implements StringList {
     @Override
     // Сравнить текущий список с другим.
     // Вернуть true/false или исключение, если передан null.
-    //
-    public boolean equals(StringListImpl otherList) {
+    public boolean equals(IntListImpl otherList) {
         if (otherList == null) {
             throw new OtherArrayIsNullException();
         }
         int count = 0;
         if (size == otherList.size()) {
             for (int i = 0; i < size; i++) {
-                if (array[i].equals(otherList.get(i))) {
+                if (array[i] == otherList.get(i)) {
                     count = count + 1;
                 }
             }
@@ -225,16 +214,56 @@ public class StringListImpl implements StringList {
     @Override
     // Удалить все элементы из списка.
     public void clear() {
+        for (int i = 0; i < size; i++) {
+            array[i] = 0;
+        }
         size = 0;
     }
 
     @Override
     // Создать новый массив из строк в списке и вернуть его.
-    public String[] toArray() {
-        String[] newArray = new String[size];
+    public int[] toArray() {
+        int[] newArray = new int[size];
         for (int i = 0; i < size; i++) {
             newArray[i] = array[i];
         }
         return newArray;
     }
+
+    // Добавить в реализацию приватный метод с самой быстрой из рассмотренных сортировок.
+    //??? приватный можно использовать только в классе IntListImpl?
+    private void sortInsertion() {
+        for (int i = 1; i < array.length; i++) {
+            int temp = array[i];
+            int j = i;
+            while (j > 0 && array[j - 1] >= temp) {
+                array[j] = array[j - 1];
+                j--;
+            }
+            array[j] = temp;
+        }
+    }
+
+    // Добавить в реализацию приватный метод бинарного поиска.
+    // метод contains переработать, осуществив сортировку вставками и вызвав метод бинарного поиска.
+    private boolean binarySearch(int item) {
+        int min = 0;
+        int max = size - 1;
+
+        while (min <= max) {
+            int mid = (min + max) / 2;
+
+            if (item == array[mid]) {
+                return true;
+            }
+
+            if (item < array[mid]) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
+            }
+        }
+        return false;
+    }
+
 }
