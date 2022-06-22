@@ -38,14 +38,9 @@ public class IntListImpl implements IntList {
         if (size < capacity) {
             array[size] = item;
         } else {
-            capacity = capacity * 2;
-            int[] newArray = new int[capacity];
-            for (int i = 0; i < size; i++) {
-                newArray[i] = array[i];
-            }
-            newArray[size] = item;
-            array = newArray;
+            grow();
         }
+        array[size] = item;
         size = size + 1;
         return item;
     }
@@ -57,12 +52,7 @@ public class IntListImpl implements IntList {
             throw new SizeException();
         }
         if ((size + 1) > capacity) {
-            capacity = capacity * 2;
-            int[] newArray = new int[capacity];
-            for (int i = 0; i < size; i++) {
-                newArray[i] = array[i];
-            }
-            array = newArray;
+            grow();
         }
         if (index == size) {
             array[index] = item;
@@ -81,6 +71,15 @@ public class IntListImpl implements IntList {
         }
         size = size + 1;
         return item;
+    }
+
+    private void grow(){
+        capacity = capacity * 2;
+        int[] newArray = new int[capacity];
+        for (int i = 0; i < size; i++) {
+            newArray[i] = array[i];
+        }
+        array = newArray;
     }
 
     @Override
@@ -231,7 +230,6 @@ public class IntListImpl implements IntList {
     }
 
     // Добавить в реализацию приватный метод с самой быстрой из рассмотренных сортировок.
-    //??? приватный можно использовать только в классе IntListImpl?
     private void sortInsertion() {
         for (int i = 1; i < array.length; i++) {
             int temp = array[i];
