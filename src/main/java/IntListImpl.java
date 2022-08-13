@@ -65,7 +65,9 @@ public class IntListImpl implements IntList {
             for (int i = index + 1; i <= size; i++) {
                 actual = current;
                 current = array[i];
-                next = array[i + 1];
+                if(i != size) {
+                    next = array[i + 1];
+                }
                 array[i] = actual;
             }
         }
@@ -74,7 +76,7 @@ public class IntListImpl implements IntList {
     }
 
     private void grow(){
-        capacity = capacity * 2;
+        capacity = (int)(capacity * 1.5);
         int[] newArray = new int[capacity];
         for (int i = 0; i < size; i++) {
             newArray[i] = array[i];
